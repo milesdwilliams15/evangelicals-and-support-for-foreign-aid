@@ -20,6 +20,27 @@ ussamp <-
     "01_data/U.S. representative sample data.dta"
   )
 
+
+# make white conservative and religious indicator -------------------------
+
+ussamp %>%
+  mutate(
+    evan = ifelse(
+      relimp>=3&race3==1&lib==0,
+      1,0
+    )
+  ) -> ussamp
+# Crosstab of white-con-rel vs. everyone else:
+ussamp %>%
+  group_by(evan,ties3) %>%
+  count() %>% 
+  na.omit %>%
+  group_by(evan) %>%
+  mutate(
+    pct = n/sum(n)*100
+  )
+
+
 # make figures ------------------------------------------------------------
 
 # Figure 1:
@@ -105,23 +126,6 @@ ussamp %>%
     "03_figures/plot2.png",
     height = 3,
     width = 4
-  )
-
-# Crosstab of white-con-rel vs. everyone else:
-ussamp %>%
-  mutate(
-    evan = ifelse(
-      relimp>=3&race3==1&lib==0,
-      1,0
-    )
-  ) -> ussamp
-ussamp %>%
-  group_by(evan,ties3) %>%
-  count() %>% 
-  na.omit %>%
-  group_by(evan) %>%
-  mutate(
-    pct = n/sum(n)*100
   )
 
 # Figure 3:
